@@ -51,15 +51,39 @@
 (end-fill)
 
 
+
 (defn draw-circle
+  "Draws a filled in circle with the specified number of sides and radius. The
+   circle will be filled in with the current color."
   [num-sides radius]
   (let [circumference (* Math/PI 2.0 radius)
         forward-move-amt (/ circumference num-sides)
         angle-to-turn (/ 360.0 num-sides)]
     (start-fill)
     (dotimes [n num-sides]
-      (t/right angle-to-turn)
-      (t/forward forward-move-amt))
+      (right angle-to-turn)
+      (forward forward-move-amt))
     (end-fill)))
 
 (draw-circle 40 50)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Challenges
+
+;; 1. Draw a triangle
+
+;; 2. Define a function for drawing a triangle
+
+;; 3. Add an argument to the function to scale the triangle
+
+;; 4.  Define a function for drawing a square
+
+;; 5. Combine the functions together and draw a house.
+
+
+;; 6. Draw a flower
+;; - Define a function to draw a petal
+;; - Draw multiple petals at differnt angles
+;; - Draw the center of the flower.
+;; - Draw the stem and leaves
