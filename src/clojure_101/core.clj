@@ -1,9 +1,12 @@
 (ns clojure-101.core
+  "This demonstrates some Clojure fundamentals."
   (require [clojure.string :as string]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Clojure Syntax
+
+; This is a comment
 
 (+ 1 2)
 
@@ -33,18 +36,34 @@
 ;; Strings
 
 "Hello, this is a string"
+
+(type "this is a string")
+
 "Strings
 can go across multiple
 lines"
 
 "And then I said \"No Way!\""
 
-(str "a start " 1 2 3)
+(str "a start " 1 2 3 "other strings")
 
 (format "A string: %s A number: %d"
         "foo" 5)
 
-(string/join ", " (range 5))
+;; Accessing vars/functions in another namespace
+
+;;clojure.string is a Clojure namespace
+;; Syntax for accessing a var in another namespace is:
+;; namespace/var-name
+
+;; string is an alias in this namespace for clojure.string. (See top of file.)
+(string/join "," [1 2 3])
+
+(clojure.string/join "," [1 2 3])
+
+;; clojure.repl/dir is a helper function for listing the functions in another namespace
+(clojure.repl/dir clojure.string)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Keywords
@@ -52,6 +71,7 @@ lines"
 :a-keyword
 :username
 
+(type :keyword)
 
 (keyword "a-string")
 
@@ -124,16 +144,22 @@ nil
 -672
 55039
 
+(type 1)
+
 ;; Double aka Floats
 
 1.0
 0.576
+
+(type 1.0)
 
 ;; Ratios
 
 1/3
 
 -7/4
+
+(type 1/3)
 
 
 ;; Some Math
@@ -149,10 +175,14 @@ nil
 
 ;; Java interop
 
+;; Calling a static method.
 (java.lang.Math/pow 5 2)
 
 ;; you don't have to specify java.lang items
 (Math/pow 5 2)
+
+;; Java instance methods are invoked this way.
+(.toString 5)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -176,6 +206,10 @@ nil
 []
 [1 2 3 4]
 ["this" "is" "a mixed set of items" true 4]
+
+(type [])
+
+(ancestors (type []))
 
 ;; vector is a function that takes a variable number of args
 (vector 1 2 3 4)
@@ -216,8 +250,18 @@ nil
 
 (dissoc {:foo "bar" :a "something"} :foo)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Sets
 
-;; TODO Could talk about sequences here.
+#{1 2 3}
+
+(set [1 2 1 1 1 3 3])
+
+(conj #{1 2 3} 3)
+(conj #{1 2 3} "something new")
+
+;; Disj is only for removing items from sets.
+(disj #{1 2 3} 2)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -240,7 +284,6 @@ my-numbers
 (= my-numbers my-new-numbers)
 
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Functions and Let
@@ -257,7 +300,6 @@ my-numbers
   (+ x y))
 
 (adder 1 2)
-
 
 ;; Let gives you name values in a scoped way.
 (let [x 5 ;; names on the left values and code on the right
@@ -309,15 +351,3 @@ my-numbers
 
 (#(str "I take one argument and it was: " %)
   "foo")
-
-
-;; Accessing vars/functions in another namespace
-
-;;clojure.string is a Clojure namespace
-;; Syntax for accessing a var in another namespace is:
-;; namespace/var-name
-
-(clojure.string/join "," [1 2 3])
-
-;; clojure.repl/dir is a helper function for listing the functions in another namespace
-(clojure.repl/dir clojure.string)

@@ -1,4 +1,5 @@
 (ns clojure-101.turtle
+  "This is a playground namespace for drawing various shapes using clojure-turtle."
   (:refer-clojure :exclude [repeat])
   (require [clojure-turtle.core :as t :refer :all]))
 
