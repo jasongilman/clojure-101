@@ -25,8 +25,9 @@
 
 (eval '(+ 2 3))
 
-;; Println for outputting text to the replaced
-(println "Hello world")
+(comment
+ ;; Println for outputting text to the replaced
+ (println "Hello world"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -61,8 +62,9 @@ lines"
 
 (clojure.string/join "," [1 2 3])
 
-;; clojure.repl/dir is a helper function for listing the functions in another namespace
-(clojure.repl/dir clojure.string)
+(comment
+ ;; clojure.repl/dir is a helper function for listing the functions in another namespace
+ (clojure.repl/dir clojure.string))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -106,12 +108,13 @@ nil
 
 ;; A do clause allows you to to force multiple side effects
 
-(if true
-  (do
-   (println "I have multiple side effects")
-   (println "So a do clause is necessary")
-   "true clause!")
-  "The world is broken")
+(comment
+ (if true
+   (do
+    (println "I have multiple side effects")
+    (println "So a do clause is necessary")
+    "true clause!")
+   "The world is broken"))
 
 
 ;; AND and OR
@@ -301,15 +304,16 @@ my-numbers
 
 (adder 1 2)
 
-;; Let gives you name values in a scoped way.
-(let [x 5 ;; names on the left values and code on the right
-      y (+ x 1)
-      z (* x 2)]
-  ;; This is the body
-  (println "I'm in the body of a let")
+(comment
+ ;; Let gives you name values in a scoped way.
+ (let [x 5 ;; names on the left values and code on the right
+       y (+ x 1)
+       z (* x 2)]
+   ;; This is the body
+   (println "I'm in the body of a let")
 
   ;; The last value/result is returned
-  [x y z])
+  [x y z]))
 
 (defn logging-adder
   [x y]
@@ -318,7 +322,8 @@ my-numbers
     (println "The result was" result)
     result))
 
-(logging-adder 5000 2)
+(comment
+ (logging-adder 5000 2))
 
 
 ;; When to use def versus let

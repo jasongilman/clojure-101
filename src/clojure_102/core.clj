@@ -92,6 +92,84 @@
 (set [1 2 3 3 3 3])
 (set "The bees knees")
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Equality
+
+;; Lists and vectors of the same items are equal
+(= '(1 2 3) [1 2 3])
+
+;; Not true for sets
+(not= #{1 2 3} [1 2 3])
+
+;; Maps are not equal to pair
+(not= {:a 1 :b 2} [[:a 1] [:b 1]])
+
+;; Nil can be treated as an empty sequence
+(and (empty? []) (empty? nil))
+(= [] (map inc nil))
+
+;; But nil is not equal to an empty sequence
+(not= [] nil)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Core functions to manipulate sequences
+
+;; First, second, and last work how you would expect
+(first [1 2 3 4])
+(second [1 2 3 4])
+(last [1 2 3 4])
+
+;; rest gives you everything but the first
+(rest [1 2 3 4])
+
+;; Take and drop discard or keep a subset of the items.
+(take 3 [1 2 3 4 5])
+(drop 3 [1 2 3 4 5])
+
+;; nth goes to a specific index
+(nth [1 2 3 4] 1)
+
+
+;; conj adds onto a sequence in a type specific way.
+
+;; vector appends to end
+(conj [1 2 3] 4)
+;; Lists add to the front
+(conj '(1 2 3) 4)
+;; Sets receive the new element
+(conj #{1 2 3} 4)
+;; But do the right thing in place of duplicates
+(conj #{1 2 3} 3)
+
+;; Maps add a new key value pair.
+(conj {:b 2 :c 3} [:a 1])
+;; This is the more idiomatic way
+(assoc {:b 2 :c 2} :a 1)
+
+;; Sets also have disj for removing elements
+(disj #{1 2 3} 2)
+
+;; into let's you pour one sequence into another
+;; It's handles types in the same way conj works
+
+(into [1 2 3] [:a :b :c])
+(into '(1 2 3) [:a :b :c])
+
+(into {:a 1} [[:b 2] [:c 3]])
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Immutability
+
+(def my-nums [1 2 3 4])
+
+(conj my-nums 7)
+
+;; My nums hasn't changed
+my-nums
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -151,49 +229,50 @@
 ;; be aware of this and try to avoid expecting side effects in functions called
 ;; by lazy functions
 
-;; Defines a set of values that are the result. The values aren't printed after
-;; this is defined. map is lazy
-(def values
-  (map (fn [v]
-         ;; A side effect here where we're printing the values.
-         (println "Hi, I'm a side effect. " v)
-         v)
-       [1 2 3 4]))
-
-;; doall and dorun are two functions that can force evaluation of a lazy sequence
-;; with side effects that we want to happen.
-(doall values)
-
-;; mapv is a non-lazy varient of map that returns a vector. It's evaluated immediately.
-(def values
-  (mapv (fn [v]
+(comment
+ ;; Defines a set of values that are the result. The values aren't printed after
+ ;; this is defined. map is lazy
+ (def values
+   (map (fn [v]
           ;; A side effect here where we're printing the values.
-          (println "Hi, I'm a side effecting again. " v)
+          (println "Hi, I'm a side effect. " v)
           v)
         [1 2 3 4]))
 
+ ;; doall and dorun are two functions that can force evaluation of a lazy sequence
+ ;; with side effects that we want to happen.
+ (doall values)
+
+ ;; mapv is a non-lazy varient of map that returns a vector. It's evaluated immediately.
+ (def values
+   (mapv (fn [v]
+           ;; A side effect here where we're printing the values.
+           (println "Hi, I'm a side effecting again. " v)
+           v)
+         [1 2 3 4])))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 ;; filter returns a sequence of values matching a predicate. (A predicate is a
 ;; function returning a truthy value.
 
 (filter even? (range 25))
 (filter odd? (range 25))
 
+(defn divisible-by?
+  [^long n ^long divisor]
+  (= 0 (mod n divisor)))
 
 ;; Stringing functions together. What does this return?
-(filter odd? (map #(* 2 %) (range 25)))
+(filter #(divisible-by? % 5) (map #(* 2 %) (range 25)))
 
-;; The thread last macro is a handy way to string functions together
+;; The thread last macro is a handy way to string functions together.
 
-
-
-
-
+(->> (range 25)
+     (map #(* 2 %))
+     (filter #(divisible-by? % 5)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 ;; reduce is another basic function that works over sequences
 
 (reduce + [1 2 3 4])
@@ -220,34 +299,145 @@
 (my-map inc [1 2 3 4])
 
 
-filter
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Creating list comprehensions with for
 
-for
+;; The first line are bindings. Binding name on the left and sequences on the right
+(for [x [1 2 3 4]]
+  ;; This is the body. It's evaluated and returned.
+  (* 2 x))
 
-mapcat
+;; The real power in for comes from it's ability to skip over multiple ranges
 
+(def suits
+  [:heart :spade :diamond :club])
 
-take
-drop
+(def card-numbers
+  [:ace 2 3 4 5 6 7 8 9 10 :jack :queen :king])
 
-;; Functions taking a sequence
-some
-first
-rest
-last
+(def cards
+  "All of the playing cards"
+  (for [suit suits
+        num card-numbers]
+    [num suit]))
 
+(count cards)
 
-;; Immutability
+;; for also supports :when and :let
+
+(for [x (range 10)
+      :when (even? x)
+      :let [double-x (* 2 x)
+            triple-x (* 3 x)]
+      y [:a :b :c :d]]
+  {:x x
+   :double double-x
+   :triple triple-x
+   :y y})
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Transients
 
-;; TODO
+;; Clojure manipulation of persistent data structures is fast but it does come with
+;; some overhead. Clojure transients keeps the code the same but internally uses
+;; mutation to avoid the overheads.
+
+;; You first take a persistent data structure and make a transient version of it.
+(let [my-nums (transient [1 2 3])
+      ;; then you manipulate it using similar functions that end with a !
+      ;; The code still looks like it's the immutable version.
+      my-nums (conj! my-nums 4)]
+  ;; When you're done create persistent version of it with persistent!
+  (persistent! my-nums))
+
+(def a-bunch-of-nums
+  "A vector of 10 million longs for testing"
+  (into [] (range 10000000)))
+
+(comment
+ (def my-nums
+   (time
+    (persistent! (reduce (fn [my-nums v]
+                           (conj! my-nums v))
+                         (transient [])
+                         a-bunch-of-nums)))))
+(comment
+ (def my-slow-nums
+   (time
+    (reduce (fn [my-nums v]
+              (conj my-nums v))
+            []
+            a-bunch-of-nums))))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Transducers
 
-;; TODO
+;; An example from before that was a thread last macro:
+
+(->> (range 25)
+     (map #(* 2 %))
+     (map inc)
+     (filter #(divisible-by? % 5)))
+
+;; Which is really just a maro that rewrites it to this:
+
+(filter #(divisible-by? % 5)
+        (map inc
+             (map #(* 2 %)
+                  (range 25))))
+
+;; What's happening here when this executes?
+
+;; 1. range lazy sequence
+;; 2. lazy sequence doubling each value
+;; 3. lazy sequence of applying increment
+;; 4. lazy sequence keeping only those divisible by 5.
+
+
+;; These lazy sequences have an overhead.
+
+;; Transducers are a way of building up these sets of sequence manipulations
+;; that's more efficient and let's you compose them together before you actually
+;; have the sequence
+
+;; Creating a very simple transducer
+(def incrementer-xducer
+  (map inc))
+
+;; Two different ways to use them. (See http://clojure.org/reference/transducers for more)
+
+;; Lazy
+(sequence incrementer-xducer [1 2 3])
+
+;; Eager
+(into [] incrementer-xducer [1 2 3])
+
+;; Transducers can be composed
+
+(def doubled-incremented-values-divisible-by-5
+  (comp
+   (map #(* 2 ^long %))
+   (map inc)
+   (filter #(divisible-by? % 5))))
+
+(sequence doubled-incremented-values-divisible-by-5 (range 25))
+
+
+;; Non-scientific performance test
+(comment
+
+ (time
+  (->> a-bunch-of-nums
+       (map #(* 2 ^long %))
+       (map inc)
+       (filter #(divisible-by? % 5))
+       count))
+
+ (time
+  (->> a-bunch-of-nums
+       (into [] doubled-incremented-values-divisible-by-5)
+       count)))

@@ -3,53 +3,54 @@
   (:refer-clojure :exclude [repeat])
   (require [clojure-turtle.core :as t :refer :all]))
 
-;; defines the turtle window.
-(defonce turtle-window
-  (new-window {:size [300 480]}))
+(comment
+ ;; defines the turtle window.
+ (defonce turtle-window
+   (new-window {:size [300 480]}))
 
-;; Things you can tell the turtle to do
+ ;; Things you can tell the turtle to do
 
-(forward 30)
+ (forward 30)
 
-;; Turn right 90 degrees
-(right 90)
+ ;; Turn right 90 degrees
+ (right 90)
 
-;; Move backwards
-(back 30)
+ ;; Move backwards
+ (back 30)
 
-;; Turn left by 90 degrees
-(left 90)
+ ;; Turn left by 90 degrees
+ (left 90)
 
-;; Set the heading to 270 degrees (down)
-(setheading 270)
+ ;; Set the heading to 270 degrees (down)
+ (setheading 270)
 
-;; clear all output
-(clean)
+ ;; clear all output
+ (clean)
 
-;; Move the turtle back to its home and change heading back to up
-(home)
+ ;; Move the turtle back to its home and change heading back to up
+ (home)
 
-;; Move the turtle to a location
-(setxy 0 0)
+ ;; Move the turtle to a location
+ (setxy 0 0)
 
-;; Make the pen up so movement won't draw
-(penup)
+ ;; Make the pen up so movement won't draw
+ (penup)
 
-;; Put the pen down so movement will draw
-(pendown)
+ ;; Put the pen down so movement will draw
+ (pendown)
 
-;; Sets the color.
-;; red, green, blue[, alpha]
-;; This is a translucent blue color
-(color [0 0 255 30])
+ ;; Sets the color.
+ ;; red, green, blue[, alpha]
+ ;; This is a translucent blue color
+ (color [0 0 255 30])
 
-;; Starts filling in a shape.
-;; Call this then draw lines with the turtle.
-(start-fill)
+ ;; Starts filling in a shape.
+ ;; Call this then draw lines with the turtle.
+ (start-fill)
 
-;; End fill
-;; This will fill in the shape that was drawn
-(end-fill)
+ ;; End fill
+ ;; This will fill in the shape that was drawn
+ (end-fill))
 
 
 
@@ -66,7 +67,8 @@
       (forward forward-move-amt))
     (end-fill)))
 
-(draw-circle 40 50)
+(comment
+ (draw-circle 40 50))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
