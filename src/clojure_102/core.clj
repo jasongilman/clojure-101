@@ -33,6 +33,15 @@
 ;; Seq on empty sequence returns nil
 (seq [])
 
+(defn contains-things?
+  [values]
+  (if (seq values)
+    true
+    false))
+
+(contains-things? [1 2 3])
+(contains-things? [])
+(contains-things? nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Lists
@@ -72,7 +81,9 @@
         :last-name "Smith"
         :age 53})
 
-;; IMPORTANT: Don't rely on maps maintaining a specific key order.
+;; IMPORTANT: Don't rely on maps maintaining a specific key order. Due to an
+;; implementation detail they appear to keep their order when small but won't
+;; past a certain size.
 
 ;; Sorted maps will keep keys in order by their natural ordering
 (sorted-map 1 "one"
@@ -105,8 +116,7 @@
 (not= {:a 1 :b 2} [[:a 1] [:b 1]])
 
 ;; Nil can be treated as an empty sequence
-(and (empty? []) (empty? nil))
-(= [] (map inc nil))
+(empty? nil)
 
 ;; But nil is not equal to an empty sequence
 (not= [] nil)
@@ -185,7 +195,6 @@ my-nums
 (repeat 5 "Hello!")
 
 ;; Iterate returns each value passed through a function
-;;
 (take 5 (iterate #(* % 2) 2))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -199,8 +208,8 @@ my-nums
 ;; it tries to print out infinity
 (range)
 
-;; Drop the first million numbers and take the first one after that
-(first (drop 1000000 (range)))
+;; Drop the first million numbers and take the first three after that
+(take 3 (drop 1000000 (range)))
 
 
 
@@ -237,11 +246,24 @@ my-nums
           ;; A side effect here where we're printing the values.
           (println "Hi, I'm a side effect. " v)
           v)
-        [1 2 3 4]))
+        (range 4)))
 
  ;; doall and dorun are two functions that can force evaluation of a lazy sequence
  ;; with side effects that we want to happen.
  (doall values)
+
+ (comment
+  (def more-values
+    (map (fn [v]
+           (println "Hi, I'm a side effect. " v)
+           v)
+         (range 50)))
+
+  ;; What happens if we do this?
+  ;; (Chunking causes it to print out more than 1)
+  (take 1 more-values)
+  (take 2 more-values)
+  (drop 49 more-values))
 
  ;; mapv is a non-lazy varient of map that returns a vector. It's evaluated immediately.
  (def values
@@ -249,7 +271,7 @@ my-nums
            ;; A side effect here where we're printing the values.
            (println "Hi, I'm a side effecting again. " v)
            v)
-         [1 2 3 4])))
+         (range 4))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -296,7 +318,7 @@ my-nums
           []
           values))
 
-(my-map inc [1 2 3 4])
+(my-map str [1 2 3 4])
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
