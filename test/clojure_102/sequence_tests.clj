@@ -96,3 +96,11 @@
   (testing "Arbitrarily nested flattening"
     (is (= [1 2 3 4 5 6 7 8]
            (my-flatten [1 [2 3 [4] 5] [[[6 7]]] 8])))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; For more visual fun with drawing fractals with Clojure sequences check out Lindenmayer Systems
+;; http://nakkaya.com/2010/01/26/lindenmayer-system-in-clojure/
+;; https://brehaut.net/blog/2011/l_systems
+
+;; Try updating using the turle code in clojure-101.turtle to adapt the code at
+;; the previous blog posts to draw different fractals as an L-system
